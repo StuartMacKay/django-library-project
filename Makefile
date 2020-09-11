@@ -1,6 +1,11 @@
 #
 # Makefile: Commands to simplify development and releases
 #
+# Usage:
+#
+#    make clean
+#    make checks
+#    make patch build upload
 
 # You can set these variable on the command line.
 PYTHON = python3.8
@@ -37,23 +42,22 @@ help:
 	@echo "  clean-tests          to clean the directories created during testing"
 	@echo "  clean-coverage       to clean the test coverage data and reports"
 	@echo "  clean-venv           to clean the virtualenv"
-	@echo "  clean                to clean everything"
+	@echo "  clean                to clean everything EXCEPT the virtualenv"
 	@echo
 	@echo "  build                to build the package"
+	@echo "  checks               to run quality code checks"
 	@echo "  coverage             to measure the test coverage"
 	@echo "  major                to update the version number for a major release, e.g. 2.1 to 3.0"
 	@echo "  messages             to run the makemessages and compilemessages management commands"
 	@echo "  migrate              to run migrate management command"
 	@echo "  migrations           to run makemigrations management command"
 	@echo "  minor                to update the version number for a minor release, e.g. 2.1 to 2.2"
-	@echo "  nightly              to build a development version of the package"
 	@echo "  patch                to update the version number for a patch release, e.g. 2.1.1 to 2.1.2"
-	@echo "  pretty               to reformat the app source code"
 	@echo "  runserver            to run the Django demo site"
 	@echo "  test                 to run the tests during development"
+	@echo "  test-all             to run the tests for all the supported environments"
 	@echo "  upload               to upload a release to PyPI repository"
 	@echo "  venv                 to create the virtualenv and install dependencies"
-	@echo "  verify               to verify the tests pass for all supported environments"
 	@echo
 
 .PHONY: clean-build
@@ -63,7 +67,8 @@ clean-build:
 
 .PHONY: clean-tests
 clean-tests:
-	rm -rf .toxrm -rf .pytest_cache
+	rm -rf .tox
+	rm -rf .pytest_cache
 
 .PHONY: clean-coverage
 clean-coverage:
@@ -79,11 +84,18 @@ clean-versions:
 	rm requirements.txt
 
 .PHONY: clean
-clean: clean-build clean-tests clean-venv clean-versions
+clean: clean-build clean-tests clean-versions
 
 .PHONY: build
 build: clean-build
 	$(python) setup.py sdist bdist_wheel
+
+.PHOMY: checks
+checks:
+	flake8 $(app_dir)
+	
+	black --check $(app_dir)
+	isort --check $(app_dir)
 
 .PHONY: coverage
 coverage:
@@ -109,18 +121,9 @@ migrations:
 minor:
 	$(bumpversion) minor
 
-.PHONY: nightly
-nightly: clean-build
-	$(python) setup.py egg_info --tag-build .dev- --tag-date sdist
-
 .PHONY: patch
 patch:
 	$(bumpversion) patch
-
-.PHONY: pretty
-pretty:
-	$(black) src
-	$(isort) src
 
 .PHONY: runserver
 runserver: venv
@@ -131,6 +134,10 @@ runserver: venv
 test:
 	pytest $(pytest_opts)
 
+.PHONY: test-all
+test-all: test
+	tox
+
 .PHONY: upload
 upload:
 	$(twine) upload $(upload_opts) dist/*
@@ -140,10 +147,6 @@ venv:
 	$(pip) install --upgrade pip setuptools wheel
 	$(pip) install pip-tools
 	$(pip-sync)
-
-.PHONY: verify
-verify: test
-	tox
 
 # include any local makefiles
 -include *.mk
