@@ -1,5 +1,5 @@
 Welcome to Django Library Project's documentation!
-======================
+==================================================
 
 Contents:
 
