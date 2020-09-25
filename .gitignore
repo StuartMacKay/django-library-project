@@ -10,6 +10,7 @@ __pycache__/
 .*
 !.gitignore
 !.gitkeep
+!.travis.yml
 
 # Project artefacts
 build
