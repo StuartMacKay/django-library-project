@@ -26,6 +26,7 @@ setup(
     author="Stuart MacKay",
     author_email="smackay@flagstonesoftware.com",
     keywords="cookiecutter django app template",
+    url="https://github.com/StuartMacKay/django-library-project",
     packages=[
         "library_project",
         "library_project/migrations"
