@@ -96,7 +96,6 @@ build: clean-build
 .PHOMY: checks
 checks:
 	flake8 $(app_dir)
-
 	black --check $(app_dir)
 	isort --check $(app_dir)
 
