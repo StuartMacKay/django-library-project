@@ -1,8 +1,6 @@
 Django Library Project
 ======================
 
-.. contents:: Table of Contents
-
 Features
 --------
 
