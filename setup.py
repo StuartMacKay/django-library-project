@@ -25,7 +25,7 @@ setup(
     long_description_content_type="text/x-rst",
     author="Stuart MacKay",
     author_email="smackay@flagstonesoftware.com",
-    keywords="cookiecutter django app template",
+    keywords="cookiecutter, django, app, template",
     url="https://github.com/StuartMacKay/django-library-project",
     packages=[
         "library_project",
